@@ -8,10 +8,12 @@ library(Biostrings)
 library(aaronsaundeR)
 library(MicEco)
 library(microbiome)
+library(MicrobiotaProcess)
 library(microbiomeutilities)
 library(ggplot2)
 library(gplots)
 library(ggpubr)
+library(UpSetR)
 library(vegan)
 library(pairwiseAdonis)
 library(micro4all)
@@ -73,7 +75,7 @@ head(otu)
 #write.xlsx(otu,'/Users/sash0009/Desktop/Poorva/ANALYSIS_barley/asv_fun_barley.xlsx',colNames = TRUE,rowNames=TRUE)
 
 #Taxonomy
-TAX = tax_table(as.matrix(tax[1:7]))
+TAX = phyloseq::tax_table(as.matrix(tax[1:7]))
 colnames(TAX) <- c("Kingdom", "Phylum", "Class", "Order", "Family", "Genus", "Species")
 rownames(TAX) <- rownames(otu)
 head(TAX)
@@ -157,6 +159,11 @@ asvid_common_uniq1 <-rbind.fill(AsvId_common_dsrna_fusarium,No_treatment_uniq_ds
 
 write.xlsx(asvid_common_uniq,file = "bac_AsvId_common_uniq_treatment_barley.xlsx", sep = "\t", quote = F, rowNames = F, colNames = T )
 
+##upset
+upsetdata <- get_upset(obj=ps2.rarefied,factorNames="dsRNAFusarium")
+upset(upsetdata, empty.intersections = "on", order.by = "freq",sets.bar.color = "#56B4E9",matrix.color="blue")
+upset(upsetdata, empty.intersections = "on", order.by = "freq",sets.bar.color = c("#56B4E9", "#CDDC49", "#E69F00", "#FEE659"),matrix.color="blue")
+ggsave(filename = "fun_upset_TreatmentGroup_barley.svg")
 
 co=taxa_core(ps2.rarefied, treatment = "Treatment", frequency = 0.2, abundance_threshold = 0.01)
 otu_table(co)
