@@ -234,20 +234,11 @@ ggsave(filename = "fun_comp_species_treatment_barley_top50.svg")
 
 
 #Diversity-plot(alpha)
-#a_my_comparisons <- list( c("YY", "MM"), c("CA", "TT"), c("NN", "SS"))
-symnum.args = list(cutpoints = c(0, 0.0001, 0.001, 0.01, 0.05, 1), symbols = c("****", "***", "**", "*", "ns"))
-#plot_richness(physeq1, x="Group", measures="Shannon", color = "Group") + geom_boxplot(alpha=0.6) + theme (legend.position="none", axis.text.x=element_text(angle=45,hjust=1,vjust=1,size=12)) + stat_compare_means(method = "wilcox.test", comparisons = a_my_comparisons, label = "p.signif", symnum.args = symnum.args)
-plot_richness(ps2.rarefied,x="Treatment",measures=c("Observed", "Shannon")) + geom_boxplot() + theme_classic() + theme(strip.background = element_blank(), axis.text.x.bottom = element_text(angle = 90),axis.text.x = element_text(size = 10)) + stat_compare_means(method = "anova")
-plot_richness(ps2.rarefied,x="dsRNAFusarium",measures=c("Observed", "Shannon")) + geom_boxplot() + theme_classic() + theme(strip.background = element_blank(), axis.text.x.bottom = element_text(angle = 90),axis.text.x = element_text(size = 10)) + stat_compare_means(method = "anova",label = "p.signif",symnum.args = symnum.args) 
-plot_richness(ps2.rarefied,x="Treatment",measures=c("Observed", "Shannon"),color = "HotSpring") + geom_boxplot() + theme_classic() + theme(strip.background = element_blank(),legend.position="none", axis.text.x.bottom = element_text(angle = 90),axis.text.x = element_text(size = 10)) + stat_compare_means(method = "wilcox.test",label = "p.signif", symnum.args = symnum.args,ref.group = ".all.")
-ggsave(filename = "fun_alpha_diversity_treatment_barley.svg")
-
 richness <- estimate_richness(ps2.rarefied,measures = c ("Observed", "Shannon"))
 richness_sig <- cbind(SampleID = rownames(richness), richness)
 rownames(richness_sig) <- 1:nrow(richness_sig)
 richness_group<-merge(richness_sig,samdf,by = 'SampleID') %>% as_tibble () %>% select (SampleID,Treatment,dsRNAFusarium,Observed,Shannon)
 write.xlsx(richness_group,file = "fun_alpha_diversity_measure_barley.xlsx", sep = "\t", quote = F, rowNames = F, colNames = T )
-
 #Normality-test
 hist(richness_group$Observed, col='steelblue')
 hist(richness_group$Shannon, col='steelblue')
@@ -261,7 +252,6 @@ richness_group %>%group_by(Treatment) %>% dplyr::summarise(statistic = shapiro.t
 richness_group %>%group_by(dsRNAFusarium) %>% dplyr::summarise(statistic = shapiro.test(richness_group$Observed)$statistic,p.value = shapiro.test(richness_group$Observed)$p.value)
 richness_group %>%group_by(Treatment) %>% dplyr::summarise(statistic = shapiro.test(richness_group$Shannon)$statistic,p.value = shapiro.test(richness_group$Shannon)$p.value)
 richness_group %>%group_by(dsRNAFusarium) %>% dplyr::summarise(statistic = shapiro.test(richness_group$Shannon)$statistic,p.value = shapiro.test(richness_group$Shannon)$p.value)
-
 #Parametric
 anova.observed = aov(richness_group$Observed ~Treatment, data=samdf)
 anova.shannon = aov(richness_group$Shannon ~Treatment, data=samdf)
@@ -275,8 +265,6 @@ tukeyhsd.observed_dff=as.data.frame(tukeyhsd.observed$Treatment)
 tukeyhsd.shannon_dff=as.data.frame(tukeyhsd.shannnon$Treatment)
 write.xlsx(tukeyhsd.observed_dff,file="fun_alpha_diversity_measure_observed_tukeyhsd_treatment_barley.xlsx",sheetName = "Sheet1",colNames = TRUE,rowNames = TRUE,append = FALSE,showNA = TRUE,password = NULL)
 write.xlsx(tukeyhsd.shannon_dff,file="fun_alpha_diversity_measure_shannon_tukeyhsd_treatment_barley.xlsx",sheetName = "Sheet1",colNames = TRUE,rowNames = TRUE,append = FALSE,showNA = TRUE,password = NULL)
-
-
 #Non-parametric
 kruskal.test(richness_group$Observed ~ Treatment, data=samdf)
 kruskal.test(richness_group$Shannon ~ Treatment, data=samdf)
@@ -286,6 +274,14 @@ wilcox.observed_dff=as.data.frame(wilcox.observed$p.value)
 wilcox.shannnon_dff=as.data.frame(wilcox.shannnon$p.value)
 write.xlsx(wilcox.observed_dff,file="fun_alpha_diversity_measure_observed_wilcox_treatment_barley.xlsx", sheetName = "Sheet1",colNames = TRUE,rowNames = TRUE,append = FALSE,showNA = TRUE,password = NULL)
 write.xlsx(wilcox.shannnon_dff,file="fun_alpha_diversity_measure_shannon_wilcox_treatment_barley.xlsx", sheetName = "Sheet1",colNames = TRUE,rowNames = TRUE,append = FALSE,showNA = TRUE,password = NULL)
+
+#a_my_comparisons <- list( c("YY", "MM"), c("CA", "TT"), c("NN", "SS"))
+symnum.args = list(cutpoints = c(0, 0.0001, 0.001, 0.01, 0.05, 1), symbols = c("****", "***", "**", "*", "ns"))
+#plot_richness(physeq1, x="Group", measures="Shannon", color = "Group") + geom_boxplot(alpha=0.6) + theme (legend.position="none", axis.text.x=element_text(angle=45,hjust=1,vjust=1,size=12)) + stat_compare_means(method = "wilcox.test", comparisons = a_my_comparisons, label = "p.signif", symnum.args = symnum.args)
+plot_richness(ps2.rarefied,x="Treatment",measures=c("Observed", "Shannon")) + geom_boxplot() + theme_classic() + theme(strip.background = element_blank(), axis.text.x.bottom = element_text(angle = 90),axis.text.x = element_text(size = 10)) + stat_compare_means(method = "anova")
+plot_richness(ps2.rarefied,x="dsRNAFusarium",measures=c("Observed", "Shannon")) + geom_boxplot() + theme_classic() + theme(strip.background = element_blank(), axis.text.x.bottom = element_text(angle = 90),axis.text.x = element_text(size = 10)) + stat_compare_means(method = "anova",label = "p.signif",symnum.args = symnum.args) 
+plot_richness(ps2.rarefied,x="Treatment",measures=c("Observed", "Shannon"),color = "HotSpring") + geom_boxplot() + theme_classic() + theme(strip.background = element_blank(),legend.position="none", axis.text.x.bottom = element_text(angle = 90),axis.text.x = element_text(size = 10)) + stat_compare_means(method = "wilcox.test",label = "p.signif", symnum.args = symnum.args,ref.group = ".all.")
+ggsave(filename = "fun_alpha_diversity_treatment_barley.svg")
 
 ###Beta-diversity
 ##PCoA and PERMANOVA/ADONIS(Bray curtis)
