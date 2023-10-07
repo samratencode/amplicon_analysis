@@ -40,7 +40,7 @@ library(RColorBrewer)
 library(randomForest)
 library(strucchange)
 ##Set-working-area
-setwd("/Users/sash0009/Desktop/Poorva/ANALYSIS_barley")
+setwd("/Users/xxxx/Desktop/xxxx/ANALYSIS_barley")
 
 ##Profile-Phyloseq
 feature <- read.table(file = "16S_feature-table.tsv", sep = "\t", header = T, row.names = 1, skip = 1, comment.char = "")
@@ -71,24 +71,24 @@ head(otu)
 #otu <- cbind(AsvId = rownames(otu), otu)
 #rownames(otu) <- 1:nrow(otu)
 #otu_df=as.data.frame(otu)
-#write.xlsx(otu,'/Users/sash0009/Desktop/Poorva/ANALYSIS_barley/asv_fun_barley.xlsx',colNames = TRUE,rowNames=TRUE)
-#write.xlsx(otu,'/Users/sash0009/Desktop/Poorva/ANALYSIS_barley/asv_fun_barley.xlsx',colNames = TRUE,rowNames=TRUE)
+#write.xlsx(otu,'/Users/xxxx/Desktop/xxxx/ANALYSIS_barley/asv_fun_barley.xlsx',colNames = TRUE,rowNames=TRUE)
+#write.xlsx(otu,'/Users/xxxx/Desktop/xxxx/ANALYSIS_barley/asv_fun_barley.xlsx',colNames = TRUE,rowNames=TRUE)
 
 #Taxonomy
 TAX = phyloseq::tax_table(as.matrix(tax[1:7]))
 colnames(TAX) <- c("Kingdom", "Phylum", "Class", "Order", "Family", "Genus", "Species")
 rownames(TAX) <- rownames(otu)
 head(TAX)
-#write.xlsx(TAX,'/Users/sash0009/Desktop/Poorva/ANALYSIS_barley/taxa_fun_barley.xlsx',colNames = TRUE,rowNames=TRUE)
-#write.xlsx(TAX,'/Users/sash0009/Desktop/Poorva/ANALYSIS_barley/taxa_fun_barley.xlsx',colNames = TRUE,rowNames=TRUE)
+#write.xlsx(TAX,'/Users/xxxx/Desktop/xxxx/ANALYSIS_barley/taxa_fun_barley.xlsx',colNames = TRUE,rowNames=TRUE)
+#write.xlsx(TAX,'/Users/xxxx/Desktop/xxxx/ANALYSIS_barley/taxa_fun_barley.xlsx',colNames = TRUE,rowNames=TRUE)
 
 #sequence
 names(reference_seqs) <- rownames(TAX)
 head(reference_seqs)
 ref = as.data.frame(reference_seqs)
 head(ref)
-#write.xlsx(ref,'/Users/sash0009/Desktop/Poorva/ANALYSIS_barley/sequence_fun_barley.xlsx',colNames = TRUE,rowNames=TRUE)
-#write.xlsx(ref,'/Users/sash0009/Desktop/Poorva/ANALYSIS_barley/sequence_fun_barley.xlsx',colNames = TRUE,rowNames=TRUE)
+#write.xlsx(ref,'/Users/xxxx/Desktop/xxxx/ANALYSIS_barley/sequence_fun_barley.xlsx',colNames = TRUE,rowNames=TRUE)
+#write.xlsx(ref,'/Users/xxxx/Desktop/xxxx/ANALYSIS_barley/sequence_fun_barley.xlsx',colNames = TRUE,rowNames=TRUE)
 
 #Merging
 ps0 <-phyloseq(otu,TAX,reference_seqs)
