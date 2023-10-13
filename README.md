@@ -5,20 +5,20 @@ This repository contains R & shell scripts used for the analysis of microbiome d
 Author: Samrat Ghosh (samratencode) Contact: samrat.ghosh2010@gmail.com
 
 
-# Sampling
+# sampling
 
 
 
-# Import Database
+# import database
 
 
 
-# Run QIIME2
+# run QIIME2
 
 
 
-# Export QIIME2 output
+# export QIIME2 output
 
 
 
-# Run R scripts
+# run R scripts
