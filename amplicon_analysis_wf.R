@@ -353,26 +353,24 @@ obj_metacode1$data$n_samples <- calc_n_samples(obj_metacode1,data = "tax_table",
 obj_metacode1 %>% heat_tree( node_size = n_obs, node_color = log2_median_ratio, node_label = taxon_names, node_label_size_range = c(0.006, 0.03), node_size_trans = "log10 area", node_size_axis_label = "ASV count", node_color_axis_label = "Log2 ratio of median proportions",layout = "davidson-harel",initial_layout = "reingold-tilford")
 ggsave(filename = "fun_heattree.svg")
 
-
 ##For-network
 ps2_glom <- tax_glom(ps2.rarefied, "Genus")
 ps2_relabund_net <- transform_sample_counts(ps2.rarefied, function(x) {x/sum(x)})
-#ps2_relabund_filter_net <- ps_prune(ps2_relabund_net, min.abundance = 0.001)
-ps2_relabund_final_net <- subset_taxa(ps2_relabund_net, !is.na(Genus) & !Genus %in% c(""))
+ps2_relabund_filter_net <- ps_prune(ps2_relabund_net, min.abundance = 0.001)
+ps2_relabund_final_net <- subset_taxa(ps2_relabund_filter_net, !is.na(Genus) & !Genus %in% c(""))
 ps2_relabund_final_net
 
 
 ####Microbiome-Network-analysis-correlation-based-phylosmith
 
-co_oc_table <- co_occurrence(ps2_relabund_final_net,treatment = "dsRNAFusarium",subset = '3_dsRNA_Fusarium_graminearum',rho = 0.8, p = 0.05, method = "spearman")
-ig_net <- network_ps(ps2_relabund_final_net, treatment = "dsRNAFusarium", subset = '3_dsRNA_Fusarium_graminearum', co_occurrence_table = co_oc_table)
-ig_net_layout <-network_layout_ps(ps2_relabund_final_net, treatment = "dsRNAFusarium", subset = '3_dsRNA_Fusarium_graminearum', co_occurrence_table = co_oc_table)
+co_oc_table <- co_occurrence(ps2_relabund_final_net,treatment = "Genotype",subset = 'Resistant',rho = 0.6, p = 0.01, method = "spearman")
+ig_net <- network_ps(ps2_relabund_final_net, treatment = "Genotype", subset = 'Resistant', co_occurrence_table = co_oc_table)
+ig_net_layout <-network_layout_ps(ps2_relabund_final_net, treatment = "Genotype", subset = 'Resistant', co_occurrence_table = co_oc_table)
 View(ig_net_layout)
-write.xlsx(ig_net_layout,file="fun_genus_network_dsrna_fusarium_graminearum_dsrna_fusarium_barley.xlsx", sheetName = "Sheet1",colNames = TRUE,rowNames = TRUE,append = FALSE,showNA = TRUE,password = NULL)
-co_occurrence_network(ps2_relabund_final_net,co_occurrence_table = co_oc_table, treatment = "dsRNAFusarium", subset = '3_dsRNA_Fusarium_graminearum', classification = 'Genus',cluster=FALSE)
+write.xlsx(ig_net_layout,file="bac_genus_network_genotype_resistant_rapeseed.xlsx", sheetName = "Sheet1",colNames = TRUE,rowNames = TRUE,append = FALSE,showNA = TRUE,password = NULL)
+co_occurrence_network(ps2_relabund_final_net,co_occurrence_table = co_oc_table, treatment = "Genotype", subset = 'Resistant', classification = 'Genus',cluster=FALSE)
 
-
-ggsave(filename = "fun_genus_network_dsrna_fusarium_graminearum_dsrna_fusarium_barley.svg")
+ggsave(filename = "bac_genus_network_genotype_resistant_rapeseed.svg")
 
 variable_correlation_network(ps2_relabund_final_net, treatment = "HotSpring", subset = c("Chitu_Hotspring", "Shalla_Hotspring"), classification = 'Genus')
 
@@ -380,50 +378,87 @@ variable_correlation_network(ps2_relabund_final_net, treatment = "HotSpring", su
 ##Topological-features
 ###each-node-toplogical-features
 node_top<-function(ig){
-  e.count<-ecount(ig_net)
-  v.count<-vcount(ig_net)
+  E(ig)$weight = NA
+  e.count<-ecount(ig)
+  size=length(E(ig)) #size- number of edges
+  v.count<-vcount(ig)
+  order=length(V(ig)) #order - number of vertices
   betweeness.centrality<-igraph::betweenness(ig,v=V(ig),directed = FALSE, weights = NA,nobigint = TRUE, normalized = FALSE)
   closeness.centrality<-igraph::closeness(ig,vids=V(ig),weights = NA, normalized = FALSE)
-  node.transitivity<-igraph::transitivity(ig,type = c("local"), vids = NULL,weights = NULL)
+  node.transitivity<-igraph::transitivity(ig,type = c("local"), vids = NULL,weights = NULL) # clustering.coefficient
   ec<-igraph::eigen_centrality(ig)
   node.degree<-igraph::degree(ig,v=V(ig),mode="all")
+  node.degree.mean <-mean(igraph::degree(ig,v=V(ig),mode="all")) # mean degree
+  node.degree.norm=mean(igraph::degree(ig,v=V(ig),mode="all")/length(V(ig))) #normalized degree
   hub.score <- igraph::hub_score(ig)$vector
-  fgc <- cluster_fast_greedy(ig)
-  wtc<-cluster_walktrap(ig)
-  fgc.modularity<-modularity(fgc)
-  wtc.modularity<-modularity(wtc)
-  mean.distance<- mean_distance(ig)
-  node.topology<-data.frame(e.count,v.count,betweeness.centrality,closeness.centrality,node.transitivity,node.degree,mean.distance,hub.score,fgc.modularity,wtc.modularity,ec)
+  fgc <- cluster_fast_greedy(ig,weights =NULL)
+  wtc<-cluster_walktrap(ig,weights =NULL)
+  fgc.modularity<-modularity(fgc,membership(fgc))
+  wtc.modularity<-modularity(wtc,membership(wtc))
+  mean.distance<- mean_distance(ig) #average path length
+  node.topology<-data.frame(e.count,size,v.count,order,betweeness.centrality,closeness.centrality,node.transitivity,node.degree,node.degree.mean,node.degree.norm,mean.distance,hub.score,fgc.modularity,wtc.modularity,ec)
   return(node.topology)
 }
 nod_top_feature <- node_top(ig_net)
-write.xlsx(nod_top_feature,file="fun_genus_network_topology_dsrna_fusarium_graminearum_dsrna_fusarium_barley.xlsx", sheetName = "Sheet1",colNames = TRUE,rowNames = TRUE,append = FALSE,showNA = TRUE,password = NULL)
+write.xlsx(nod_top_feature,file="bac_genus_network_topology_genotype_resistant_rapeseed.xlsx", sheetName = "Sheet1",colNames = TRUE,rowNames = TRUE,append = FALSE,showNA = TRUE,password = NULL)
 
-network_results = function(net) {
-  E(net)$weight = NA
-  #  modularity
-  fc = cluster_fast_greedy(net,weights =NULL)
-  modularity = modularity(net,membership(fc))
-  # graph properties
-  results = data.frame(clustering.coefficient=transitivity(net), # clustering.coefficient
-                       modularity=modularity,# modularity
-                       mean.degree= mean(igraph::degree(net)),# mean degree
-                       size=length(E(net)),# size - number of edges
-                       order=length(V(net)),# order - number of vertices
-                       mean.distance=mean_distance(net),#average path length
-                       norm.degree=mean(igraph::degree(net)/length(V(net))),#normalized degree
-                       betweenness.centrality=centralization.betweenness(net)$centralization #betweenness centrality
-  )
-  return(results)
+
+#ZiPi-plot
+fgc <- cluster_fast_greedy(ig_net,weights =NULL)
+#fgc.modularity<-modularity(fgc,membership(fgc))
+ig_deg=igraph::degree(ig_net)
+N_nodes=length(ig_deg)
+
+Z=ig_deg
+Z[]=0
+P=Z
+
+Membership=membership(fgc)
+Seq=seq(1:N_nodes)
+for(i in 1:N_nodes){
+  L=Membership==Membership[i]         
+  neighbs=neighbors(ig_net,i)               
+  Kis=sum(L[neighbs])
+  SUM=0
+  SUMsq=0	
+  SUMP=0
+  Miv=Seq[L]
+  for(j in 1:sum(L)){
+    neighbsj=neighbors(ig_net,Miv[j])
+    Kjs=sum(L[neighbsj])
+    SUM=SUM+Kjs
+    SUMsq=SUMsq+Kjs^2
+  }
+  Z[i]=(Kis-SUM/sum(L))/sqrt(SUMsq/sum(L)-(SUM/sum(L))^2)
+  if(Kis-SUM/sum(L)==0){Z[i]=0}
+  for(k in 1:max(Membership)){
+    Lp=Membership==k
+    Kisp=sum(Lp[neighbs])
+    SUMP=SUMP+(Kisp/ig_deg[i])^2}
+  P[i]=1-SUMP
 }
+attribute_node.group1=cbind(degree=ig_deg,module=Membership,Pi=P,Zi=Z)
+attribute_node.group2=cbind(degree=ig_deg,module=Membership,Pi=P,Zi=Z)
+attribute_node.group1_df = data.frame(attribute_node.group1)
+attribute_node.group2_df = data.frame(attribute_node.group2)
+write.xlsx(attribute_node.group1_df,file="bac_genus_network_zipi_genotype_resistant_rapeseed.xlsx", sheetName = "Sheet1",colNames = TRUE,rowNames = TRUE,append = FALSE,showNA = TRUE,password = NULL)
+write.xlsx(attribute_node.group2_df,file="bac_genus_network_zipi_genotype_susceptible_rapeseed.xlsx", sheetName = "Sheet1",colNames = TRUE,rowNames = TRUE,append = FALSE,showNA = TRUE,password = NULL)
 
-network_results(sc.se)
+#zipi-graph-on-one-plot
+par(mfrow=c(1,1),mar=c(4,4,2,8))
+plot(attribute_node.group1[,3],attribute_node.group1[,4],xlim=c(0,1),ylim=c(-4,4),xlab="Among-module connectivity (Pi)",ylab=("Within-module connectivity (Zi)"),col=2,pch=1,cex=0.8)
+abline(v=0.62,h=2.5,col=8)
+points(attribute_node.group2[,3],attribute_node.group2[,4],col=3,pch=6,cex=0.8)
+text(0.15,4,"Module hubs")
+text(0.8,4,"Network hubs")
+text(0.15,-4,"Peripherals")
+text(0.8,-4,"Connectors")
+legend(1.05,4,legend=c("Resistant","Susceptible"),pch=c(1,6),col=c(2,3),xpd=T,bty="n",pt.lwd = 2)
+#legend(1.05,4,legend=c("Ambient","Mesophilic Low-solid","Mesophilic","Mesophilic Co-digestion","Thermo"),pch=c(0,2,5,6,1),col=c("grey27",4,"cadetblue1",3,2),xpd=T,bty="n",pt.lwd = 2)
 
-ZiPiPlot()
-net_properties()
-node_properties()
-#Other-network
-network.2(phy_genus)
+ggsave(filename = "bac_genus_network_zipi_plot.svg")
+
+
 #
 qgraph(cor(otu),groups = sam)
 
