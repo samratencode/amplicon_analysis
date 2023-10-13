@@ -497,19 +497,17 @@ layout_with_fr(ig_net)
 layout_with_kk(ig_net)
 layout_with_lgl(ig_net)
 
-
-
-
 ###Lefse-to-test-for-differential-abundance-between-categories
-lefse <- run_lefse (ps2.rarefied, wilcoxon_cutoff = 0.05,norm = "CPM",taxa_rank = "all", group = "Treatment", kw_cutoff = 0.05,multigrp_strat = TRUE,lda_cutoff = 4)
+lefse <- run_lefse (ps2.rarefied, wilcoxon_cutoff = 0.05,norm = "CPM",taxa_rank = "all", group = "Genotype", kw_cutoff = 0.05,multigrp_strat = TRUE,lda_cutoff = 3)
 head(marker_table(lefse))
+write.xlsx(lefse@marker_table,file="bac_lefse_genotype_rapeseed.xlsx", sheetName = "Sheet1",colNames = TRUE,rowNames = TRUE,append = FALSE,showNA = TRUE,password = NULL)
 
 # bar plot
 plot_ef_bar(lefse)
-ggsave(filename = "fun_lda_bar_treatment_barley.svg")
+ggsave(filename = "bac_lda_bar_genotype_rapeseed.svg")
 # dot plot
 plot_ef_dot(lefse)
-ggsave(filename = "fun_lda_dot_treatment_barley.svg")
+ggsave(filename = "bac_lda_dot_genotype_rapeseed.svg")
 
 ###Marker-like-lefse-edgeR
 mm_edger <- run_edger(ps2.rarefied, group = "FieldNature", pvalue_cutoff = 0.05, p_adjust = "fdr")
