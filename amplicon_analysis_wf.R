@@ -115,12 +115,15 @@ sample_variables(ps2)
 
 ###Rare-fraction
 nice_colors = c("#999999", "#E69F00", "#56B4E9","#e98756","#c08160","#5800e6", "#CDDC49", "#C475D3", "#E94B30", "#233F57", "#FEE659", "#A1CFDD", "#F4755E", "#D6F6F7","#EB6D58", "#6898BF")
-rarecurve(t(otu_table(ps2)), ylab="Species (ASVs)",step=100,lwd=1.5,col = nice_colors,cex=0.5,label=F,main="Rarefaction Curve for all 32 Fungal samples")
-ggsave(filename = "fun_rare_faction_barley.svg")
+otu.rare = otu_table(ps2)
+otu.rare_df = as.data.frame(t(otu.rare))
+rarecurve(otu.rare_df, ylab="Species (ASVs)",step=1000,lwd=1.5,col = nice_colors,cex=0.5,label=F,main="Rarefaction Curve for all 63 Fungal samples")
+
+ggsave(filename = "fun_rare_faction_rapeseed.svg")
 
 ###Pruning
 #phy_abund <- ps_prune(phy, min.samples = 5, min.reads = 10)
-#tree_top_100 <- subset_taxa(ps2_relabund, Kingdom=="funteria")
+#tree_top_100 <- subset_taxa(ps2_relabund, Kingdom=="bacteria")
 #tree_top_100 <- prune_taxa(names(sort(taxa_sums(tree_top_100),TRUE)[1:100]), tree_top_100)
 
 ###Rarefied
