@@ -19,6 +19,9 @@ Author: Samrat Ghosh (samratencode) Contact: samrat.ghosh2010@gmail.com
 
 ### run QIIME2
 
+./amplicon_qiime2_bacteria_wf.sh
+
+./amplicon_qiime2_fungi_wf.sh
 
 
 ### export QIIME2 output
