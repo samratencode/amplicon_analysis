@@ -29,6 +29,8 @@ Author: Samrat Ghosh (samratencode) Contact: samrat.ghosh2010@gmail.com
 ./amplicon_exporting_wf.sh
 
 ### run R scripts
-Open this script in Rstudio and run step by step
+Open this script in Rstudio and run step by step:
+
+amplicon_analysis_wf.R
 
 
