@@ -8,5 +8,5 @@ qiime tools import --type 'SampleData[PairedEndSequencesWithQuality]' --input-pa
 qiime dada2 denoise-paired --i-demultiplexed-seqs paired_end_bacteria_demux.qza --p-trim-left-f 0 --p-trim-left-r 0 --p-trunc-len-f 0 --p-trunc-len-r 0 --p-n-threads 30 --o-table 16S_table.qza --o-representative-sequences 16S_rep_seqs.qza --o-denoising-stats 16S_denoising_stats.qza --verbose
 
 ###Bacteria-SILVA-OTU-referene-Phylogeny
-qiime feature-classifier classify-sklearn --i-classifier /home/samrat.ghosh/SOFTWARES/SILVA_138_1_QIIME/silva_ver138_1_99_classifier_bac.qza --i-reads 16S_rep_seqs.qza --o-classification 16S_classified_rep_seqs.qza
+qiime feature-classifier classify-sklearn --i-classifier /home/xxxx/SOFTWARES/SILVA_138_1_QIIME/silva_ver138_1_99_classifier_bac.qza --i-reads 16S_rep_seqs.qza --o-classification 16S_classified_rep_seqs.qza
 qiime phylogeny align-to-tree-mafft-fasttree --i-sequences 16S_rep_seqs.qza --output-dir phylogenetic_tree_bac --p-n-threads 30 --verbose &> phylogenetic_bac_tree_generation.log    
