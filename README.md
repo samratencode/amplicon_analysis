@@ -14,6 +14,7 @@ Author: Samrat Ghosh (samratencode) Contact: samrat.ghosh2010@gmail.com
 ### import database
 
 ./amplicon_import_silva_db_wf.sh
+
 ./amplicon_import_unite_db_wf.sh
 
 ### run QIIME2
