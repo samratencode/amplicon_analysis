@@ -26,6 +26,9 @@ Author: Samrat Ghosh (samratencode) Contact: samrat.ghosh2010@gmail.com
 
 ### export QIIME2 output
 
-
+./amplicon_exporting_wf.sh
 
 ### run R scripts
+Open this script in Rstudio and run step by step
+
+
