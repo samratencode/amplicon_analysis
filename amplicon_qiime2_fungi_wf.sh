@@ -7,6 +7,6 @@ qiime dada2 denoise-paired --i-demultiplexed-seqs paired_end_fungi_demux.qza --p
 
 
 ###Fungi-UNITE-OTU-referene-Phylogeny
-qiime feature-classifier classify-sklearn --i-classifier /home/samrat.ghosh/SOFTWARES/UNITE_9_QIIME_fungi/unite-ver9-dynamic-classifier-fungi_29.11.2022.qza --i-reads 18S_rep_seqs.qza --o-classification 18S_classified_rep_seqs.qza
+qiime feature-classifier classify-sklearn --i-classifier /home/xxxx/SOFTWARES/UNITE_9_QIIME_fungi/unite-ver9-dynamic-classifier-fungi_29.11.2022.qza --i-reads 18S_rep_seqs.qza --o-classification 18S_classified_rep_seqs.qza
 qiime phylogeny align-to-tree-mafft-fasttree --i-sequences 18S_rep_seqs.qza --output-dir phylogenetic_tree_fun --p-n-threads 30 --verbose &> phylogenetic_fun_tree_generation.log 
 
