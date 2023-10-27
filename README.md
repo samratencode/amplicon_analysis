@@ -1,5 +1,5 @@
 # amplicon_analysis
-This repository contains R & shell scripts used for the analysis of amplicon data (16S&ITS sequence).
+This repository contains R & shell scripts used for the analysis of amplicon based microbiome data (16S & ITS sequence).
 
 
 Author: Samrat Ghosh (samratencode) Contact: samrat.ghosh2010@gmail.com
