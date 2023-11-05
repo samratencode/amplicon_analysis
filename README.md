@@ -8,7 +8,7 @@ Author: Samrat Ghosh (samratencode) Contact: samrat.ghosh2010@gmail.com
 ### sampling
 
 
- ./amplicon_qiime2_sampling_wf.sh
+$ ./amplicon_qiime2_sampling_wf.sh
 
 
 ### import database
