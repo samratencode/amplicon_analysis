@@ -40,7 +40,7 @@ library(RColorBrewer)
 library(randomForest)
 library(strucchange)
 ##Set-working-area
-setwd("/Users/xxxx/Desktop/xxxx/ANALYSIS_barley")
+setwd("/Users/xxxx/Desktop/xxxx/ANALYSIS")
 
 ##Profile-Phyloseq
 feature <- read.table(file = "16S_feature-table.tsv", sep = "\t", header = T, row.names = 1, skip = 1, comment.char = "")
@@ -71,24 +71,24 @@ head(otu)
 #otu <- cbind(AsvId = rownames(otu), otu)
 #rownames(otu) <- 1:nrow(otu)
 #otu_df=as.data.frame(otu)
-#write.xlsx(otu,'/Users/xxxx/Desktop/xxxx/ANALYSIS_barley/asv_fun_barley.xlsx',colNames = TRUE,rowNames=TRUE)
-#write.xlsx(otu,'/Users/xxxx/Desktop/xxxx/ANALYSIS_barley/asv_fun_barley.xlsx',colNames = TRUE,rowNames=TRUE)
+write.xlsx(otu,'/Users/xxxx/Desktop/xxxx/ANALYSIS/asv_bac_barley.xlsx',colNames = TRUE,rowNames=TRUE)
+write.xlsx(otu,'/Users/xxxx/Desktop/xxxx/ANALYSIS/asv_bac_barley.xlsx',colNames = TRUE,rowNames=TRUE)
 
 #Taxonomy
 TAX = phyloseq::tax_table(as.matrix(tax[1:7]))
 colnames(TAX) <- c("Kingdom", "Phylum", "Class", "Order", "Family", "Genus", "Species")
 rownames(TAX) <- rownames(otu)
 head(TAX)
-#write.xlsx(TAX,'/Users/xxxx/Desktop/xxxx/ANALYSIS_barley/taxa_fun_barley.xlsx',colNames = TRUE,rowNames=TRUE)
-#write.xlsx(TAX,'/Users/xxxx/Desktop/xxxx/ANALYSIS_barley/taxa_fun_barley.xlsx',colNames = TRUE,rowNames=TRUE)
+write.xlsx(TAX,'/Users/xxxx/Desktop/xxxx/ANALYSIS/taxa_bac_barley.xlsx',colNames = TRUE,rowNames=TRUE)
+write.xlsx(TAX,'/Users/xxxx/Desktop/xxxx/ANALYSIS/taxa_bac_barley.xlsx',colNames = TRUE,rowNames=TRUE)
 
 #sequence
 names(reference_seqs) <- rownames(TAX)
 head(reference_seqs)
 ref = as.data.frame(reference_seqs)
 head(ref)
-#write.xlsx(ref,'/Users/xxxx/Desktop/xxxx/ANALYSIS_barley/sequence_fun_barley.xlsx',colNames = TRUE,rowNames=TRUE)
-#write.xlsx(ref,'/Users/xxxx/Desktop/xxxx/ANALYSIS_barley/sequence_fun_barley.xlsx',colNames = TRUE,rowNames=TRUE)
+write.xlsx(ref,'/Users/xxxx/Desktop/xxxx/ANALYSIS/sequence_bac_barley.xlsx',colNames = TRUE,rowNames=TRUE)
+write.xlsx(ref,'/Users/xxxx/Desktop/xxxx/ANALYSIS/sequence_bac_barley.xlsx',colNames = TRUE,rowNames=TRUE)
 
 #Merging
 ps0 <-phyloseq(otu,TAX,reference_seqs)
@@ -119,7 +119,7 @@ otu.rare = otu_table(ps2)
 otu.rare_df = as.data.frame(t(otu.rare))
 rarecurve(otu.rare_df, ylab="Species (ASVs)",step=1000,lwd=1.5,col = nice_colors,cex=0.5,label=F,main="Rarefaction Curve for all 63 Fungal samples")
 
-ggsave(filename = "fun_rare_faction_rapeseed.svg")
+ggsave(filename = "bac_rare_faction_barley.svg")
 
 ###Pruning
 #phy_abund <- ps_prune(phy, min.samples = 5, min.reads = 10)
@@ -212,8 +212,8 @@ df_norm_avg=df_norm %>% group_by (SamplingStage,Species) %>% summarise(Abundance
 df_norm_avg %>% group_by(SamplingStage) %>% summarise(Abundance = sum(Abundance)) %>% pull(Abundance) %>% `==`(100) %>% all()
 write.xlsx(df_norm_avg,file = "fun_relative_abundance_demo.xlsx", sep = "\t", quote = F, row.names = F, col.names = T )
 
-write.xlsx(ps2.rarefied %>% transform_sample_counts(function(x) {x/sum(x)}*100)  %>% psmelt() %>% dplyr::arrange(OTU) %>% dplyr::rename(AsvId = OTU) %>%  dplyr::select(AsvId,Kingdom,Phylum, Class, Order, Family, Genus, Species,Sample,Treatment,dsRNAFusarium,Abundance), file = "fun_barley_relative_abundance.xlsx", sep = "\t", quote = F, rowNames = F, colNames = T)
-write.table(ps2.rarefied %>% transform_sample_counts(function(x) {x/sum(x)}*100) %>% psmelt() %>% dplyr::arrange(OTU) %>% dplyr::rename(AsvId = OTU) %>%  dplyr::select(AsvId,Kingdom,Phylum, Class, Order, Family, Genus, Species,Sample,Treatment,dsRNAFusarium,Abundance), file = "fun_barley_relative_abundance.tsv", sep = "\t", quote = F, row.names = F, col.names = T)
+write.xlsx(ps2.rarefied %>% transform_sample_counts(function(x) {x/sum(x)}*100)  %>% psmelt() %>% dplyr::arrange(OTU) %>% dplyr::rename(AsvId = OTU) %>%  dplyr::select(AsvId,Kingdom,Phylum, Class, Order, Family, Genus, Species,Sample,Treatment,dsRNAFusarium,Abundance), file = "bac_barley_relative_abundance.xlsx", sep = "\t", quote = F, rowNames = F, colNames = T)
+write.table(ps2.rarefied %>% transform_sample_counts(function(x) {x/sum(x)}*100) %>% psmelt() %>% dplyr::arrange(OTU) %>% dplyr::rename(AsvId = OTU) %>%  dplyr::select(AsvId,Kingdom,Phylum, Class, Order, Family, Genus, Species,Sample,Treatment,dsRNAFusarium,Abundance), file = "bac_barley_relative_abundance.tsv", sep = "\t", quote = F, row.names = F, col.names = T)
 
 
 ##Specific-Normalization
@@ -223,9 +223,9 @@ ps2_relabund_merge <- merge_samples(ps2_relabund, "Treatment")
 ps2_relabund_final <- transform_sample_counts(ps2_relabund_merge, function(x) {x/sum(x)}*100)
 ps2_relabund_final
 #sort(taxa_sums(ps2_relabund_final), TRUE)[1:50]/nsamples(ps2_relabund_final)
-write.xlsx(ps2_relabund_final %>% psmelt() %>% dplyr::arrange(OTU) %>% dplyr::rename(AsvId = OTU) %>% select(AsvId,Phylum,Sample,Abundance), file ="fun_barley_relative_abundance_phylum_treatment.xlsx", sep = "\t", quote = F, rowNames = F, colNames = T)
-write.xlsx(ps2_relabund_final %>% psmelt() %>% dplyr::arrange(OTU) %>% dplyr::rename(AsvId = OTU) %>% select(AsvId,Genus,Sample,Abundance), file ="fun_barley_relative_abundance_genus_treatment.xlsx", sep = "\t", quote = F, rowNames = F, colNames = T)
-write.xlsx(ps2_relabund_final %>% psmelt() %>% dplyr::arrange(OTU) %>% dplyr::rename(AsvId = OTU) %>% select(AsvId,Species,Sample,Abundance), file ="fun_barley_relative_abundance_species_treatment.xlsx", sep = "\t", quote = F, rowNames = F, colNames = T)
+write.xlsx(ps2_relabund_final %>% psmelt() %>% dplyr::arrange(OTU) %>% dplyr::rename(AsvId = OTU) %>% select(AsvId,Phylum,Sample,Abundance), file ="bac_barley_relative_abundance_phylum_treatment.xlsx", sep = "\t", quote = F, rowNames = F, colNames = T)
+write.xlsx(ps2_relabund_final %>% psmelt() %>% dplyr::arrange(OTU) %>% dplyr::rename(AsvId = OTU) %>% select(AsvId,Genus,Sample,Abundance), file ="bac_barley_relative_abundance_genus_treatment.xlsx", sep = "\t", quote = F, rowNames = F, colNames = T)
+write.xlsx(ps2_relabund_final %>% psmelt() %>% dplyr::arrange(OTU) %>% dplyr::rename(AsvId = OTU) %>% select(AsvId,Species,Sample,Abundance), file ="bac_barley_relative_abundance_species_treatment.xlsx", sep = "\t", quote = F, rowNames = F, colNames = T)
 
 comp_top_50 <- prune_taxa(names(sort(taxa_sums(ps2_relabund_final),TRUE)[1:50]), ps2_relabund_final)
 comp_top_50
@@ -234,13 +234,13 @@ comp_top_50
 ###Composition-plot
 #Phylum
 plot_bar(ps2_relabund_final,fill = "Phylum")+ labs(x = "", y="Relative Abundance (%)\n")
-ggsave(filename = "fun_comp_phylum_treatment_barley.svg")
+ggsave(filename = "bac_comp_phylum_treatment_barley.svg")
 #Genus
 plot_bar(ps2_relabund_final,fill = "Genus")+ labs(x = "", y="Relative Abundance (%)\n")
-ggsave(filename = "fun_comp_genus_treatment_barley_top50.svg")
+ggsave(filename = "bac_comp_genus_treatment_barley_top50.svg")
 #Species
 plot_bar(ps2_relabund_final,fill = "Species")+ labs(x = "", y="Relative Abundance (%)\n")
-ggsave(filename = "fun_comp_species_treatment_barley_top50.svg")
+ggsave(filename = "bac_comp_species_treatment_barley_top50.svg")
 
 
 #Diversity-plot(alpha)
@@ -248,7 +248,7 @@ richness <- estimate_richness(ps2.rarefied,measures = c ("Observed", "Shannon"))
 richness_sig <- cbind(SampleID = rownames(richness), richness)
 rownames(richness_sig) <- 1:nrow(richness_sig)
 richness_group<-merge(richness_sig,samdf,by = 'SampleID') %>% as_tibble () %>% select (SampleID,Treatment,dsRNAFusarium,Observed,Shannon)
-write.xlsx(richness_group,file = "fun_alpha_diversity_measure_barley.xlsx", sep = "\t", quote = F, rowNames = F, colNames = T )
+write.xlsx(richness_group,file = "bac_alpha_diversity_measure_barley.xlsx", sep = "\t", quote = F, rowNames = F, colNames = T )
 #Normality-test
 hist(richness_group$Observed, col='steelblue')
 hist(richness_group$Shannon, col='steelblue')
@@ -410,7 +410,7 @@ node_top<-function(ig){
   return(node.topology)
 }
 nod_top_feature <- node_top(ig_net)
-write.xlsx(nod_top_feature,file="bac_genus_network_topology_genotype_resistant_rapeseed.xlsx", sheetName = "Sheet1",colNames = TRUE,rowNames = TRUE,append = FALSE,showNA = TRUE,password = NULL)
+write.xlsx(nod_top_feature,file="bac_genus_network_topology_barley.xlsx", sheetName = "Sheet1",colNames = TRUE,rowNames = TRUE,append = FALSE,showNA = TRUE,password = NULL)
 
 
 #ZiPi-plot
