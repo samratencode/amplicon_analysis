@@ -1,12 +1,12 @@
 ###DataImport
-#qiime tools import --type 'SampleData[PairedEndSequencesWithQuality]' --input-path manifest_fungi.csv --output-path paired_end_fungi_demux.qza --input-format PairedEndFastqManifestPhred33
+qiime tools import --type 'SampleData[PairedEndSequencesWithQuality]' --input-path manifest_fungi.csv --output-path paired_end_fungi_demux.qza --input-format PairedEndFastqManifestPhred33
 
 
 ##PrimersTrim 
-#qiime cutadapt trim-paired --i-demultiplexed-sequences paired_end_fungi_demux.qza --p-front-f TAGAGGAAGTAAAAGTCGTAA --p-front-r TTCAAAGATTCGATGATTCA --p-error-rate 0 --o-trimmed-sequences paired_end_fungi_demux_trimmed.qza
+qiime cutadapt trim-paired --i-demultiplexed-sequences paired_end_fungi_demux.qza --p-front-f TAGAGGAAGTAAAAGTCGTAA --p-front-r TTCAAAGATTCGATGATTCA --p-error-rate 0 --o-trimmed-sequences paired_end_fungi_demux_trimmed.qza
 
 ##Check quality plot
-#qiime demux summarize --i-data paired_end_fungi_demux_trimmed.qza --o-visualization paired_end_fungi_demux_trimmed.qzv
+qiime demux summarize --i-data paired_end_fungi_demux_trimmed.qza --o-visualization paired_end_fungi_demux_trimmed.qzv
 
 
 ###Dereplication-DADA2
