@@ -167,7 +167,7 @@ ggsave(filename = "bac_core_prevalence_treatmentgroup_dsrna_pb.svg")
 p1 <-plot_core(core.rel.f, prevalences = prevalences, detections = det, plot.type = "lineplot") + xlab("Relative Abundance (%)") + theme_bw()
 print(p1)
 
-##Top-phyla
+
 
 ##Normalization
 df_norm=ps2.rarefied %>% transform_sample_counts(function(x) {x/sum(x)}*100)  %>% psmelt() %>% arrange(OTU) %>% rename(AsvId = OTU) %>%  select(AsvId,Kingdom,Phylum, Class, Order, Family, Genus, Species,Sample,Genotype,Abundance)
