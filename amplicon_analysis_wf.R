@@ -151,7 +151,7 @@ ggsave(filename = "bac_upset_treatmentgroup_pb.svg")
 sample_variables(ps2.rarefied)
 phy_1w <- subset_samples(ps2.rarefied, TreatmentGroup == "4_dsRNA")
 
-core.rel <- microbiome::transform(ps2.rarefied, "compositional")
+core.rel <- microbiome::transform(phy_1w, "compositional")
 core.rel.f <- format_to_besthit(core.rel)
 taxa_names(core.rel.f)[1:5]
 
@@ -162,7 +162,7 @@ detections <- round(10^seq(log10(1e-3), log10(.2), length = 10),3)
 #(1e-3) = 0.001% abundance; change "-3" to -2 to increase to 0.01%
 p <- plot_core(core.rel.f, plot.type = "heatmap", colours = rev(brewer.pal(10, "Spectral")),min.prevalence = 0.5, prevalences = prevalences, detections = detections) + xlab("Detection Threshold (Relative Abundance (%))")
 print(p)
-ggsave(filename = "bac_core_prevalence_pb.svg")
+ggsave(filename = "bac_core_prevalence_treatmentgroup_dsrna_pb.svg")
 
 p1 <-plot_core(core.rel.f, prevalences = prevalences, detections = det, plot.type = "lineplot") + xlab("Relative Abundance (%)") + theme_bw()
 print(p1)
@@ -182,13 +182,13 @@ write.table(ps2.rarefied %>% transform_sample_counts(function(x) {x/sum(x)}*100)
 ##Specific-Normalization
 ps2_glom <- tax_glom(ps2.rarefied, "Species")
 ps2_relabund <- transform_sample_counts(ps2_glom, function(x) {x/sum(x)}*100)
-ps2_relabund_merge <- merge_samples(ps2_relabund, "Treatment")
+ps2_relabund_merge <- merge_samples(ps2_relabund, "TreatmentGroup")
 ps2_relabund_final <- transform_sample_counts(ps2_relabund_merge, function(x) {x/sum(x)}*100)
 ps2_relabund_final
 #sort(taxa_sums(ps2_relabund_final), TRUE)[1:50]/nsamples(ps2_relabund_final)
-write.xlsx(ps2_relabund_final %>% psmelt() %>% dplyr::arrange(OTU) %>% dplyr::rename(AsvId = OTU) %>% select(AsvId,Phylum,Sample,Abundance), file ="bac_pb_relative_abundance_phylum_treatment.xlsx", sep = "\t", quote = F, rowNames = F, colNames = T)
-write.xlsx(ps2_relabund_final %>% psmelt() %>% dplyr::arrange(OTU) %>% dplyr::rename(AsvId = OTU) %>% select(AsvId,Genus,Sample,Abundance), file ="bac_pb_relative_abundance_genus_treatment.xlsx", sep = "\t", quote = F, rowNames = F, colNames = T)
-write.xlsx(ps2_relabund_final %>% psmelt() %>% dplyr::arrange(OTU) %>% dplyr::rename(AsvId = OTU) %>% select(AsvId,Species,Sample,Abundance), file ="bac_pb_relative_abundance_species_treatment.xlsx", sep = "\t", quote = F, rowNames = F, colNames = T)
+write.xlsx(ps2_relabund_final %>% psmelt() %>% dplyr::arrange(OTU) %>% dplyr::rename(AsvId = OTU) %>% select(AsvId,Phylum,Sample,Abundance), file ="bac_pb_relative_abundance_phylum_treatmentgroup.xlsx", sep = "\t", quote = F, rowNames = F, colNames = T)
+write.xlsx(ps2_relabund_final %>% psmelt() %>% dplyr::arrange(OTU) %>% dplyr::rename(AsvId = OTU) %>% select(AsvId,Genus,Sample,Abundance), file ="bac_pb_relative_abundance_genus_treatmentgroup.xlsx", sep = "\t", quote = F, rowNames = F, colNames = T)
+write.xlsx(ps2_relabund_final %>% psmelt() %>% dplyr::arrange(OTU) %>% dplyr::rename(AsvId = OTU) %>% select(AsvId,Species,Sample,Abundance), file ="bac_pb_relative_abundance_species_treatmentgroup.xlsx", sep = "\t", quote = F, rowNames = F, colNames = T)
 
 comp_top_20 <- prune_taxa(names(sort(taxa_sums(ps2_relabund_final),TRUE)[1:20]), ps2_relabund_final)
 comp_top_20
@@ -197,13 +197,13 @@ comp_top_20
 ###Composition-plot
 #Phylum
 plot_bar(ps2_relabund_final,fill = "Phylum")+ labs(x = "", y="Relative Abundance (%)\n")
-ggsave(filename = "bac_comp_phylum_treatment_pb.svg")
+ggsave(filename = "bac_comp_phylum_treatmentgroup_pb.svg")
 #Genus
 plot_bar(comp_top_20,fill = "Genus")+ labs(x = "", y="Relative Abundance (%)\n")
-ggsave(filename = "bac_comp_genus_treatment_pb_top20.svg")
+ggsave(filename = "bac_comp_genus_treatmentgroup_pb_top20.svg")
 #Species
 plot_bar(comp_top_20,fill = "Species")+ labs(x = "", y="Relative Abundance (%)\n")
-ggsave(filename = "bac_comp_species_treatment_pb_top20.svg")
+ggsave(filename = "bac_comp_species_treatmentgroup_pb_top20.svg")
 
 
 ###alpha-diversity
@@ -378,7 +378,7 @@ write.xlsx(attribute_node.group4_df,file="bac_phylum_network_zipi_treatmentgroup
 
 #zipi-graph-on-one-plot
 par(mfrow=c(1,1),mar=c(4,4,2,8))
-plot(attribute_node.group3[,3],attribute_node.group3[,4],xlim=c(0,1),ylim=c(-4,4),xlab="Among-module connectivity (Pi)",ylab=("Within-module connectivity (Zi)"),col=2,pch=1,cex=0.8)
+plot(attribute_node.group1[,3],attribute_node.group1[,4],xlim=c(0,1),ylim=c(-4,4),xlab="Among-module connectivity (Pi)",ylab=("Within-module connectivity (Zi)"),col=2,pch=1,cex=0.8)
 abline(v=0.62,h=2.5,col=8)
 points(attribute_node.group2[,3],attribute_node.group2[,4],col=3,pch=6,cex=0.8)
 points(attribute_node.group3[,3],attribute_node.group3[,4],col=4,pch=6,cex=0.8)
@@ -387,7 +387,7 @@ text(0.15,4,"Module hubs")
 text(0.8,4,"Network hubs")
 text(0.15,-4,"Peripherals")
 text(0.8,-4,"Connectors")
-legend(1.05,4,legend=c("1_NT","2_Fg","3_dsRNA_Fg","4_dsRNA"),pch=c(1,6),col=c(2,3,4,"grey27"),xpd=T,bty="n",pt.lwd = 2)
+legend(1.05,4,legend=c("1_NT","2_NT_Fg","3_dsRNA_Fg","4_dsRNA"),pch=c(1,6),col=c(2,3,4,"grey27"),xpd=T,bty="n",pt.lwd = 2)
 legend(1.05,4,legend=c("3_dsRNA_Fg","4_dsRNA"),pch=c(1,6),col=c(2,"grey27"),xpd=T,bty="n",pt.lwd = 2)
 
 ggsave(filename = "bac_phylum_network_dsrna_dsrnafg_zipi_plot.svg")
@@ -401,10 +401,10 @@ write.xlsx(lefse@marker_table,file="bac_lefse_treatmentgroup_pb.xlsx", sheetName
 
 # bar plot
 plot_ef_bar(lefse)
-ggsave(filename = "fun_lda_bar_treatmentgroup_pb.svg")
+ggsave(filename = "bac_lda_bar_treatmentgroup_pb.svg")
 # dot plot
 plot_ef_dot(lefse)
-ggsave(filename = "fun_lda_dot_treatmentgroup_pb.svg")
+ggsave(filename = "bac_lda_dot_treatmentgroup_pb.svg")
 
 
 
