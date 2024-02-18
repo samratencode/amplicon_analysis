@@ -118,9 +118,9 @@ sample_variables(ps2)
 nice_colors = c("#999999", "#E69F00", "#56B4E9","#e98756","#c08160","#5800e6", "#CDDC49", "#C475D3", "#E94B30", "#233F57", "#FEE659", "#A1CFDD", "#F4755E", "#D6F6F7","#EB6D58", "#6898BF")
 otu.rare = otu_table(ps2)
 otu.rare_df = as.data.frame(t(otu.rare))
-rarecurve(otu.rare_df, ylab="Species (ASVs)",step=1000,lwd=1.5,col = nice_colors,cex=0.5,label=F,main="Rarefaction Curve for all 31 Bacterial samples")
+rarecurve(otu.rare_df, ylab="Species (ASVs)",step=1000,lwd=1.5,col = nice_colors,cex=0.5,label=F,main="Rarefaction Curve for all Bacterial samples")
 
-ggsave(filename = "fun_rare_faction_pb.svg")
+ggsave(filename = "bac_rare_faction_pb.svg")
 
 ###Pruning
 #phy_abund <- ps_prune(phy, min.samples = 5, min.reads = 10)
@@ -134,7 +134,7 @@ pruned
 ps2.rarefied = rarefy_even_depth(pruned, rngseed=1, sample.size=0.9*min(sample_sums(pruned)), replace=F)
 ps2.rarefied
 
-##upset
+##upset-plot
 #c("#56B4E9", "#CDDC49", "#E69F00","#e98756","#c08160","#F4755E", "#D6F6F7","#EB6D58", "#6898BF")
 upsetdata <- get_upset(obj=ps2.rarefied,factorNames="TreatmentGroup")
 upsetdata <- cbind(AsvId = rownames(upsetdata), upsetdata)
