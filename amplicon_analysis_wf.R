@@ -390,7 +390,7 @@ text(0.8,-4,"Connectors")
 legend(1.05,4,legend=c("1_NT","2_NT_Fg","3_dsRNA_Fg","4_dsRNA"),pch=c(1,6),col=c(2,3,4,"grey27"),xpd=T,bty="n",pt.lwd = 2)
 legend(1.05,4,legend=c("3_dsRNA_Fg","4_dsRNA"),pch=c(1,6),col=c(2,"grey27"),xpd=T,bty="n",pt.lwd = 2)
 
-ggsave(filename = "bac_phylum_network_dsrna_dsrnafg_zipi_plot.svg")
+ggsave(filename = "bac_phylum_network_zipi_plot.svg")
 
 
 
