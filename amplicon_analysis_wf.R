@@ -51,6 +51,13 @@ library(ExploreMetabar)
 ##Set-working-area
 setwd("/Users/xxxx/xxxx/xxxx")
 
+##Overlapping
+
+conflicts_prefer(phyloseq::tax_glom)
+conflicts_prefer(phyloseq::transform_sample_counts)
+conflicts_prefer(phyloseq::psmelt)
+conflicts_prefer(phyloseq::plot_bar)
+
 ##Profile-Phyloseq
 feature <- read.table(file = "16S_feature_table.tsv", sep = "\t", header = T, row.names = 1, skip = 1, comment.char = "")
 head(feature)
