@@ -406,6 +406,57 @@ ggsave(filename = "bac_lda_bar_treatmentgroup_pb.svg")
 plot_ef_dot(lefse)
 ggsave(filename = "bac_lda_dot_treatmentgroup_pb.svg")
 
+###ANCOMBC-Differential-abundance-analysis
+
+ps_ancom = subset_samples(ps2.rarefied, TreatmentGroup %in% c("0_ND","4_dsRNA"))
+
+ancom_out = ancombc(ps_ancom, formula = "TreatmentGroup", p_adj_method = "fdr",group = "TreatmentGroup")
+
+results_ancom_bc = data.frame(ASVId = ancom_out$res$lfc$taxon,lfc = ancom_out$res$lfc$TreatmentGroup4_dsRNA, se = ancom_out$res$se$TreatmentGroup4_dsRNA, W = ancom_out$res$W$TreatmentGroup4_dsRNA, p_val = ancom_out$res$p_val$TreatmentGroup4_dsRNA, q_value = ancom_out$res$q_val$TreatmentGroup4_dsRNA, Diff_ab = ancom_out$res$diff_abn$TreatmentGroup4_dsRNA)
+results_ancom_bc$lfc = results_ancom_bc$lfc * -1
+results_ancom_bc
+results_ancom_bc$group = ifelse(results_ancom_bc$q_value < 0.05 & results_ancom_bc$lfc > 0, "4_dsRNA", "Not singificant")
+results_ancom_bc$group = ifelse(results_ancom_bc$q_value < 0.05 & results_ancom_bc$lfc < 0, "0_ND",results_ancom_bc$group)
+results_ancom_bc
+##Volcano-plot
+ggplot(results_ancom_bc, aes(x = as.numeric(lfc), y = -log10(as.numeric(q_value)), color = group)) + geom_point() + labs(x = "Log2 Fold Change", y = "-log10(p-value)", title = "Volcano Plot") + geom_vline(xintercept = 0, linetype = "dashed", color = "gray") +theme_bw()
+
+TAXtab = as.data.frame(TAX)
+TAXtab
+name_tmp = sprintf("ASV%s",seq(1:nrow(TAXtab)))
+TAXtab$name <- NA
+TAXtab$name = ifelse(is.na(TAXtab$name), TAXtab$Genus, TAXtab$name)
+TAXtab$name = ifelse(is.na(TAXtab$name), TAXtab$Family, TAXtab$name)
+TAXtab$name = ifelse(is.na(TAXtab$name), TAXtab$Order, TAXtab$name)
+TAXtab$name = ifelse(is.na(TAXtab$name), TAXtab$Class, TAXtab$name)
+TAXtab$name = ifelse(is.na(TAXtab$name), TAXtab$Phylum, TAXtab$name)
+unique(is.na(TAXtab$name)) 
+TAXtab$name = paste(name_tmp, TAXtab$name, sep = "-")
+TAXtab$name[1:10]
+
+results_ancom_bc$name = TAXtab$name[match(results_ancom_bc$ASVId,rownames(TAXtab))]
+results_ancom_bc
+results_ancom_bc_df = data.frame(results_ancom_bc)
+
+write.xlsx(results_ancom_bc_df,file="bac_ancombc_fc_0_ND_4_dsRNA_treatmentgroup_pp.xlsx", sheetName = "Sheet1",colNames = TRUE,rowNames = TRUE,append = TRUE,showNA = TRUE,password = NULL)
+
+results_sig = results_ancom_bc[results_ancom_bc$q_value < 0.05,]
+results_sig
+table(results_sig$group)
+
+Sum_abundance= colSums(decostand(ps2.rarefied@otu_table, method = "total"))
+Sum_abundance
+results_sig$sum_abundance = Sum_abundance[match(results_sig$ASVId, names(Sum_abundance))]
+results_sig = results_sig[base::order(results_sig$sum_abundance, decreasing = TRUE),]
+results_sig = results_sig[1:9,]
+results_sig
+results_sig$name = factor(results_sig$name, levels = rev(results_sig$name)) 
+
+##ancombc-plot
+a = ggplot(results_sig, aes(lfc, name, color = group ))+ geom_point() +theme_bw() + geom_segment( aes(x=0, xend=lfc, y=name, yend=name, color = group)) + geom_vline(xintercept = 0, size=0.3) +xlab("log2FoldChange") + ylab(NULL)
+print(a)
+
+ggsave(filename = "bac_ancombc_fc_0_ND_4_dsRNA_treatmentgroup_pp.svg")
 
 
 
