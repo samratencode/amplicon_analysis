@@ -221,6 +221,19 @@ ggsave(filename = "bac_comp_genus_treatmentgroup_pb_top20.svg")
 plot_bar(comp_top_20,fill = "Species")+ labs(x = "", y="Relative Abundance (%)\n")
 ggsave(filename = "bac_comp_species_treatmentgroup_pb_top20.svg")
 
+###Alternative-composition-plot
+#Phylum
+plot_taxa_composition(ps2_relabund_final, taxonomic.level = "Phylum", plot.type = "barplot", transform = "compositional", palette = brewer.pal(12, "Paired")) + scale_y_percent() + labs(x = "", y="Relative Abundance (%)\n")
+ggsave(filename = "fun_comp_phylum_timepoint_pp.svg")
+
+#Genus
+plot_taxa_composition(comp_top_15, taxonomic.level = "Genus", plot.type = "barplot", transform = "compositional", palette = brewer.pal(12, "Paired")) + scale_y_percent() + labs(x = "", y="Relative Abundance (%)\n")
+ggsave(filename = "fun_comp_genus_timepoint_pp_top15.svg")
+
+#Species
+plot_taxa_composition(comp_top_15, taxonomic.level = "Species", plot.type = "barplot", transform = "compositional", palette = brewer.pal(12, "Paired")) + scale_y_percent() + labs(x = "", y="Relative Abundance (%)\n")
+ggsave(filename = "fun_comp_species_timepoint_pp_top15.svg")
+
 
 ###alpha-diversity
 richness <- estimate_richness(ps2.rarefied,measures = c ("Shannon"))
