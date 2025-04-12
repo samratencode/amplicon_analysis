@@ -327,6 +327,85 @@ co_occurrence_network(ps2_relabund_final_net,co_occurrence_table = co_oc_table, 
 ggsave(filename = "bac_phylum_network_treatmentgroup_dsrna.svg")
 
 
+####Microbiome-Network-analysis-SpiecEasi-based
+##Sample-subset
+ps_net = subset_samples(ps2_relabund_final_net, TreatmentGroup %in% c("0_ND"))
+ps_net
+
+###Add-taxonomic-classification-to-ASV-ID
+ps_net <- microbiomeutilities::format_to_besthit(ps_net)
+head(tax_table(ps_net))
+
+###Prepare-data-for-SpiecEasi
+otu.c <- t(otu_table(ps_net)@.Data)
+head(otu.c)
+tax.c <- as.data.frame(tax_table(ps_net)@.Data)
+head(tax.c)
+
+###SpiecEasi-network-construction
+set.seed(9999)
+net.c <- spiec.easi(otu.c, method='mb')
+
+n.c <- symBeta(getOptBeta(net.c))
+
+###Add-names-to-ids
+colnames(n.c) <- rownames(n.c) <- colnames(otu.c)
+vsize <- log10(apply(otu.c, 2, mean))
+
+###Prepearing-graph-object-for-plotting
+ps.ig <- graph.adjacency(n.c, mode='undirected', add.rownames = TRUE, weighted = TRUE)
+#ps.ig <- graph_from_adjacency_matrix (n.c, mode='undirected', add.rownames = TRUE, weighted = TRUE)
+ps.ig
+
+coords.fdr = layout_with_fr(ps.ig)
+coords.fdr1 = layout_on_sphere(ps.ig)
+###igraph-network
+E(ps.ig)[weight > 0]$color<-"steelblue" 
+E(ps.ig)[weight < 0]$color<-"orange"
+
+plot(ps.ig, layout=coords.fdr, vertex.size = 2, vertex.label.cex = 0.5)
+
+###ggnet-network
+ps.net <- asNetwork(ps.ig)
+network::set.edge.attribute(ps.net, "color", ifelse(ps.net %e% "weight" > 0, "steelblue", "orange"))
+
+###adding taxonomic information
+colnames(tax_table(ps_net))
+
+phyla <- map_levels(colnames(otu.c), from = "best_hit", to = "Phylum", tax_table(ps_net))
+
+ps.net %v% "Phylum" <- phyla
+ps.net %v% "nodesize" <- vsize
+
+
+
+###Network-plot-based-on-node-size
+mycolors <- scale_color_manual(values = c("#a6cee3", "#1f78b4", "#b2df8a", "#33a02c","#fb9a99","#e31a1c","#fdbf6f","#ff7f00","#cab2d6","#6a3d9a","#ffff99","#b15928", "#233F57", "#FEE659", "#A1CFDD"))
+
+p <- ggnet2(ps.net, node.color = "Phylum", label = TRUE, node.size = "nodesize", label.size = 2.5, edge.color = "color") + guides(color=guide_legend(title="Phylum"), size = "none") + mycolors
+p
+
+###Check-degree-distribution
+ps.mb <- degree.distribution(ps.ig)
+plot(0:(length(ps.mb)-1), ps.mb, ylim=c(0,.35), type='b',ylab="Frequency", xlab="Degree", main="Degree Distributions")
+
+###Network-plot-based-on-degree
+p <- ggnet2(ps.net, node.color = "Phylum", label = TRUE, label.size = 2.5, edge.color = "color", size = "degree", size.min = 0) + guides(color=guide_legend(title="Phylum"), size = FALSE) + mycolors
+p
+
+ggsave(filename = "fun_genus_network_treatmentgroup_nd.svg")
+
+###Network-properties
+betaMat=as.matrix(symBeta(getOptBeta(net.c)))
+
+##No-of-positive-and-negative-edges
+positive=length(betaMat[betaMat>0])/2 
+positive
+negative=length(betaMat[betaMat<0])/2 
+negative
+total=length(betaMat[betaMat!=0])/2 
+total
+
 ##Topological-features
 ###each-node-toplogical-features
 node_top<-function(ig){
