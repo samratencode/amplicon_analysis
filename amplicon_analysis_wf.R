@@ -525,6 +525,21 @@ legend(1.05,4,legend=c("3_dsRNA_Fg","4_dsRNA"),pch=c(1,6),col=c(2,"grey27"),xpd=
 
 ggsave(filename = "bac_phylum_network_zipi_plot.svg")
 
+###Alternative-zipi-plot-ggclusternet-based
+
+#igraph  = igraph::graph_from_data_frame(edge_list, directed = FALSE, vertices = node_list)
+
+res = ZiPiPlot(igraph =ps.ig ,method = "cluster_fast_greedy")
+p <- res[[1]]
+p
+ggsave(filename = "fun_genus_network_treatmentgroup_nd_zipi_plot_pp.svg")
+zp <- res[[2]]
+head(zp)
+#Final-plotting
+#p + ggrepel::geom_text_repel(data = zp,aes(x = p,y = z,label = row.names(zp)))
+zp_df = as.data.frame(zp)
+write.xlsx(zp_df,file="fun_genus_network_zipi_treatmentgroup_nd_pp.xlsx", sheetName = "Sheet1",colNames = TRUE,rowNames = TRUE,append = FALSE,showNA = TRUE,password = NULL)
+
 
 
 ###Lefse-to-test-for-differential-abundance-between-categories
