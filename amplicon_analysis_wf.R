@@ -275,6 +275,26 @@ plot_richness(ps2.rarefied,x="TreatmentGroup",measures=c("Shannon")) + geom_boxp
 
 ggsave(filename = "bac_alpha_diversity_treatmentgroup_pb.svg")
 
+#Alternative-Diversity-plot(alpha)
+a_my_comparisons <- list( c("0_NT","1_NT_Pi"), c("2_WT","3_WT_Pi"), c("4_NSP","5_NSP_Pi"), c("6_GPB1","7_GPB1_Pi"), c("8_CUT3","9_CUT3_Pi"), c("0_NT","2_WT"), c("0_NT","4_NSP"), c("0_NT","6_GPB1"), c("0_NT","8_CUT3"))
+
+b_my_comparisons <- list( c("0_ND","1_ND_Pi"), c("2_NSP", "3_NSP_Pi"), c("4_dsRNA", "5_dsRNA_Pi"), c("0_ND","2_NSP"), c("0_ND","3_NSP_Pi"), c("0_ND","4_dsRNA"), c("0_ND","5_dsRNA_Pi"))
+
+symnum.args = list(cutpoints = c(0, 0.0001, 0.001, 0.01, 0.05, 1), symbols = c("****", "***", "**", "*", "ns"))
+cols1 <- c("0_NT" = "blue", "2_WT" = "blue", "4_NSP" = "blue", "6_GPB1" = "blue","8_CUT3"="blue","1_NT_Pi"="yellow","3_WT_Pi"="yellow","5_NSP_Pi"="yellow","7_GPB1_Pi"="yellow", "9_CUT3_Pi"="yellow")
+
+cols2 <- c("0_ND"="blue","2_NSP"="blue","4_dsRNA"="blue","1_ND_Pi" = "yellow","3_NSP_Pi"="yellow","5_dsRNA_Pi"="yellow")
+
+Group=sample_data(ps2.rarefied)$Treatment
+Group=sample_data(ps2.rarefied)$TreatmentGroup
+plot_richness (ps2.rarefied,x="Treatment", measures=c("Simpson")) + geom_boxplot(aes(fill=Group)) + scale_fill_manual(values=cols1) + theme_classic() + theme(strip.background = element_blank(), axis.text.x.bottom = element_text(angle = 90),axis.text.x = element_text(size = 10)) + stat_compare_means(method = "anova",label.y = 1.5) + stat_compare_means(method = "t.test", comparisons = a_my_comparisons, label = "p.signif", symnum.args = symnum.args)
+plot_richness (ps2.rarefied,x="TreatmentGroup", measures=c("Simpson")) + geom_boxplot(aes(fill=Group))+ scale_fill_manual(values=cols2) + theme_classic() + theme(strip.background = element_blank(), axis.text.x.bottom = element_text(angle = 90),axis.text.x = element_text(size = 10)) + stat_compare_means(method = "anova",label.y = 1.5) + stat_compare_means(method = "t.test", comparisons = b_my_comparisons, label = "p.signif", symnum.args = symnum.args)  
+
+plot_richness(ps2.rarefied,x="Treatment",measures=c("Simpson")) + geom_boxplot() + theme_classic() + theme(strip.background = element_blank(), axis.text.x.bottom = element_text(angle = 90),axis.text.x = element_text(size = 10)) + stat_compare_means(method = "anova",label.x = 1.5) 
+plot_richness(ps2.rarefied,x="TreatmentGroup",measures=c("Simpson")) + geom_boxplot() + theme_classic() + theme(strip.background = element_blank(), axis.text.x.bottom = element_text(angle = 90),axis.text.x = element_text(size = 10)) + stat_compare_means(label.x = 1.5) 
+
+ggsave(filename = "fun_alpha_diversity_treatmentgroup_pp.svg")
+
 
 ###Beta-diversity
 ##PCoA and PERMANOVA/ADONIS(Bray curtis)
