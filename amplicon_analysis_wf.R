@@ -52,12 +52,17 @@ library(ExploreMetabar)
 ##Set-working-area
 setwd("/Users/xxxx/xxxx/xxxx")
 
-##Overlapping
+##Conflict-package-preference
 
 conflicts_prefer(phyloseq::tax_glom)
 conflicts_prefer(phyloseq::transform_sample_counts)
 conflicts_prefer(phyloseq::psmelt)
 conflicts_prefer(phyloseq::plot_bar)
+conflicts_prefer(phyloseq::filter_taxa)
+conflicts_prefer(speedyseq::tax_table)
+conflicts_prefer(dplyr::full_join)
+conflicts_prefer(igraph::path)
+conflicts_prefer(ggplot2::alpha)
 
 ##Profile-Phyloseq
 feature <- read.table(file = "16S_feature_table.tsv", sep = "\t", header = T, row.names = 1, skip = 1, comment.char = "")
