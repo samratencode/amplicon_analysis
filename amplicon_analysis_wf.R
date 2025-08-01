@@ -563,7 +563,7 @@ ancom_out = ancombc(ps_ancom, formula = "TreatmentGroup", p_adj_method = "none",
 results_ancom_bc = data.frame(ASVId = ancom_out$res$lfc$taxon,lfc = ancom_out$res$lfc$TreatmentGroup4_dsRNA, se = ancom_out$res$se$TreatmentGroup4_dsRNA, W = ancom_out$res$W$TreatmentGroup4_dsRNA, p_val = ancom_out$res$p_val$TreatmentGroup4_dsRNA, q_value = ancom_out$res$q_val$TreatmentGroup4_dsRNA, Diff_ab = ancom_out$res$diff_abn$TreatmentGroup4_dsRNA)
 results_ancom_bc$lfc = results_ancom_bc$lfc * -1
 results_ancom_bc
-results_ancom_bc$group = ifelse(results_ancom_bc$q_value < 0.05 & results_ancom_bc$lfc > 0, "4_dsRNA", "Not singificant")
+results_ancom_bc$group = ifelse(results_ancom_bc$q_value < 0.05 & results_ancom_bc$lfc > 0, "4_dsRNA", "Not singificant")    ##For_pairwise_test_p-val_q-val_remain_same
 results_ancom_bc$group = ifelse(results_ancom_bc$q_value < 0.05 & results_ancom_bc$lfc < 0, "0_ND",results_ancom_bc$group)
 results_ancom_bc
 ##Volcano-plot
