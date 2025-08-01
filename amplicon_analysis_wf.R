@@ -558,7 +558,7 @@ ggsave(filename = "bac_lda_dot_treatmentgroup_pb.svg")
 
 ps_ancom = subset_samples(ps2.rarefied, TreatmentGroup %in% c("0_ND","4_dsRNA"))
 
-ancom_out = ancombc(ps_ancom, formula = "TreatmentGroup", p_adj_method = "fdr",group = "TreatmentGroup")
+ancom_out = ancombc(ps_ancom, formula = "TreatmentGroup", p_adj_method = "none",group = "TreatmentGroup")
 
 results_ancom_bc = data.frame(ASVId = ancom_out$res$lfc$taxon,lfc = ancom_out$res$lfc$TreatmentGroup4_dsRNA, se = ancom_out$res$se$TreatmentGroup4_dsRNA, W = ancom_out$res$W$TreatmentGroup4_dsRNA, p_val = ancom_out$res$p_val$TreatmentGroup4_dsRNA, q_value = ancom_out$res$q_val$TreatmentGroup4_dsRNA, Diff_ab = ancom_out$res$diff_abn$TreatmentGroup4_dsRNA)
 results_ancom_bc$lfc = results_ancom_bc$lfc * -1
